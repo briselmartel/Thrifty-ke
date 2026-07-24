@@ -12,6 +12,8 @@ export default function Signup() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const [confirmationSent, setConfirmationSent] = useState(false)
+
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
@@ -20,7 +22,7 @@ export default function Signup() {
       return
     }
     setLoading(true)
-    const { error } = await signUp({
+    const { error, needsConfirmation } = await signUp({
       email: form.email,
       password: form.password,
       fullName: form.fullName,
@@ -28,8 +30,24 @@ export default function Signup() {
       sellerType,
     })
     setLoading(false)
-    if (error) { setError(error.message); return }
+    if (error) { setError(error.message || 'Something went wrong creating your account. Please try again.'); return }
+    if (needsConfirmation) { setConfirmationSent(true); return }
     navigate('/dashboard')
+  }
+
+  if (confirmationSent) {
+    return (
+      <div className="max-w-md mx-auto px-4 sm:px-6 py-20 text-center">
+        <div className="text-4xl mb-4" style={{ color: 'var(--color-gold)' }}>✓</div>
+        <h1 className="font-display text-3xl mb-3">Check your email</h1>
+        <p className="opacity-75 mb-6">
+          We've sent a confirmation link to <strong>{form.email}</strong>. Click it to activate your account, then log in.
+        </p>
+        <Link to="/login" className="px-6 py-3 rounded-full font-medium inline-block" style={{ background: 'var(--color-terracotta)', color: '#0E0F0D' }}>
+          Go to login
+        </Link>
+      </div>
+    )
   }
 
   return (

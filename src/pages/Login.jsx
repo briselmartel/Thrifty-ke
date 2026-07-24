@@ -15,7 +15,7 @@ export default function Login() {
     setLoading(true)
     const { error } = await signIn(form)
     setLoading(false)
-    if (error) { setError(error.message); return }
+    if (error) { setError(error.message || 'Could not log in. Please check your email and password.'); return }
     navigate('/dashboard')
   }
 

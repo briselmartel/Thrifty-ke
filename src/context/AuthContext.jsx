@@ -34,22 +34,22 @@ export function AuthProvider({ children }) {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: fullName } },
+      options: {
+        data: {
+          full_name: fullName,
+          role,
+          seller_type: role === 'seller' ? sellerType : null,
+        },
+      },
     })
     if (error) return { error }
 
-    if (data.user) {
-      const { error: profileError } = await supabase.from('profiles').insert({
-        id: data.user.id,
-        full_name: fullName,
-        email,
-        role, // 'buyer' | 'seller'
-        seller_type: role === 'seller' ? sellerType : null,
-        verification_status: role === 'seller' ? 'unverified' : null,
-      })
-      if (profileError) return { error: profileError }
-    }
-    return { data }
+    // The profile row is created automatically by a database trigger
+    // (see supabase/schema.sql — handle_new_user), so it works even
+    // before the user confirms their email and has an active session.
+    // needsConfirmation is true when email confirmation is required
+    // and the user isn't logged in yet (no session returned).
+    return { data, needsConfirmation: !data.session }
   }
 
   async function signIn({ email, password }) {
