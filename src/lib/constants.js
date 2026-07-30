@@ -41,9 +41,10 @@ export const CONTACT = {
 }
 
 export const BANK_DETAILS = {
-  bankName: 'Add your bank name here',
-  accountName: 'Thrifty Kenya Ltd',
-  accountNumber: 'Add your account number here',
-  branch: 'Add your branch here',
+  bankName: 'Equity Bank',
+  accountName: 'Stacey Wangoi',
+  accountNumber: '0840182941357',
+  branch: 'Not required — Equity accounts can be paid to nationwide',
   swift: 'Add SWIFT/BIC if receiving from outside Kenya',
 }
+
