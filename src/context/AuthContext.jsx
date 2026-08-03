@@ -31,30 +31,47 @@ export function AuthProvider({ children }) {
   }, [])
 
   async function signUp({ email, password, fullName, role, sellerType }) {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-          role,
-          seller_type: role === 'seller' ? sellerType : null,
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+            role,
+            seller_type: role === 'seller' ? sellerType : null,
+          },
         },
-      },
-    })
-    if (error) return { error }
+      })
+      if (error) {
+        console.error('Signup error:', error)
+        return { error: { message: error.message || error.error_description || error.msg || 'Could not create your account. Please try again in a moment.' } }
+      }
 
-    // The profile row is created automatically by a database trigger
-    // (see supabase/schema.sql — handle_new_user), so it works even
-    // before the user confirms their email and has an active session.
-    // needsConfirmation is true when email confirmation is required
-    // and the user isn't logged in yet (no session returned).
-    return { data, needsConfirmation: !data.session }
+      // The profile row is created automatically by a database trigger
+      // (see supabase/schema.sql — handle_new_user), so it works even
+      // before the user confirms their email and has an active session.
+      // needsConfirmation is true when email confirmation is required
+      // and the user isn't logged in yet (no session returned).
+      return { data, needsConfirmation: !data.session }
+    } catch (err) {
+      console.error('Unexpected signup error:', err)
+      return { error: { message: err?.message || 'Something went wrong. Please check your internet connection and try again.' } }
+    }
   }
 
   async function signIn({ email, password }) {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-    return { data, error }
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) {
+        console.error('Login error:', error)
+        return { data, error: { message: error.message || 'Could not log in. Please check your email and password.' } }
+      }
+      return { data, error }
+    } catch (err) {
+      console.error('Unexpected login error:', err)
+      return { error: { message: err?.message || 'Something went wrong. Please check your internet connection and try again.' } }
+    }
   }
 
   async function signOut() {
