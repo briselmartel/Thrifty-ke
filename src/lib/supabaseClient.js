@@ -14,7 +14,7 @@ if (!supabaseConfigured) {
 }
 
 // Fall back to a harmless placeholder URL so createClient never throws and
-// crashes the whole app with a blank screen — the app shows a setup notice
+// crashes the whole app with a blank screen - the app shows a setup notice
 // instead (see main.jsx) when supabaseConfigured is false.
 export const supabase = createClient(
   supabaseConfigured ? supabaseUrl : 'https://placeholder.supabase.co',

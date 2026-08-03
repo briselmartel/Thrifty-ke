@@ -54,7 +54,7 @@ export default function Login() {
           className="w-full py-3 rounded-full font-medium disabled:opacity-50"
           style={{ background: 'var(--color-terracotta)', color: '#0E0F0D' }}
         >
-          {loading ? 'Logging in…' : 'Log in'}
+          {loading ? 'Logging inâ€¦' : 'Log in'}
         </button>
       </form>
 

@@ -3,10 +3,10 @@ import { CONTACT } from '../lib/constants'
 
 const steps = [
   { title: 'Find an item you trust', body: 'Browse verified sellers and thrift stores. Every listing shows real photos, condition, and seller verification status.' },
-  { title: 'Pay into escrow, not the seller', body: 'Transfer your payment by bank transfer. Thrifty holds the funds — the seller is never paid upfront.' },
+  { title: 'Pay into escrow, not the seller', body: 'Transfer your payment by bank transfer. Thrifty holds the funds - the seller is never paid upfront.' },
   { title: 'Seller ships your item', body: 'Once your payment is verified, the seller is notified and ships to your delivery address.' },
   { title: 'You inspect before release', body: 'When your item arrives, check it against the listing. Happy? Confirm and the seller gets paid.' },
-  { title: 'Problem? We step in', body: 'If the item is not as described, contact us before confirming and we help resolve it — including a refund from the held funds where appropriate.' },
+  { title: 'Problem? We step in', body: 'If the item is not as described, contact us before confirming and we help resolve it - including a refund from the held funds where appropriate.' },
 ]
 
 export default function HowItWorks() {

@@ -34,7 +34,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="border-t border-white/10 py-6 text-center text-xs opacity-50">
-        © {new Date().getFullYear()} Thrifty.ke — Nairobi, Kenya
+        Â© {new Date().getFullYear()} Thrifty.ke - Nairobi, Kenya
       </div>
     </footer>
   )

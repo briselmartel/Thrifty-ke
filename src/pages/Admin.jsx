@@ -44,13 +44,13 @@ export default function Admin() {
 
       <section className="mb-14">
         <h2 className="font-display text-2xl mb-4">Seller verification</h2>
-        {loading && <p className="opacity-60 text-sm">Loading…</p>}
+        {loading && <p className="opacity-60 text-sm">Loadingâ€¦</p>}
         <div className="space-y-3">
           {sellers.map((s) => (
             <div key={s.id} className="flex items-center justify-between p-4 rounded-2xl border border-white/10">
               <div>
                 <div className="text-sm font-medium">{s.full_name} <span className="opacity-50">({s.email})</span></div>
-                <div className="text-xs opacity-60 capitalize">{s.seller_type?.replace('_', ' ')} · {s.verification_status}</div>
+                <div className="text-xs opacity-60 capitalize">{s.seller_type?.replace('_', ' ')} Â· {s.verification_status}</div>
               </div>
               <div className="flex gap-2">
                 <button onClick={() => verifySeller(s.id, 'verified')} className="text-xs px-3 py-2 rounded-full" style={{ background: 'var(--color-teal)', color: '#0E0F0D' }}>Verify</button>
@@ -68,7 +68,7 @@ export default function Admin() {
             <div key={o.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl border border-white/10">
               <div>
                 <div className="text-sm font-medium">{o.listings?.title}</div>
-                <div className="text-xs opacity-60">Buyer: {o.profiles?.full_name} · KSh {Number(o.amount).toLocaleString()} · {o.payment_reference || 'no ref'}</div>
+                <div className="text-xs opacity-60">Buyer: {o.profiles?.full_name} Â· KSh {Number(o.amount).toLocaleString()} Â· {o.payment_reference || 'no ref'}</div>
                 {o.payment_proof_url && <a href={o.payment_proof_url} target="_blank" rel="noreferrer" className="text-xs underline" style={{ color: 'var(--color-gold)' }}>View proof</a>}
               </div>
               <select

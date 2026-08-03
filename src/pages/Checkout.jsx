@@ -26,7 +26,7 @@ export default function Checkout() {
   }, [listingId])
 
   if (!user) { navigate('/login'); return null }
-  if (!listing) return <div className="max-w-xl mx-auto px-4 py-20 opacity-60">Loading…</div>
+  if (!listing) return <div className="max-w-xl mx-auto px-4 py-20 opacity-60">Loadingâ€¦</div>
 
   async function handleConfirm() {
     setError('')
@@ -69,7 +69,7 @@ export default function Checkout() {
   return (
     <div className="max-w-xl mx-auto px-4 sm:px-6 py-16">
       <h1 className="font-display text-3xl mb-2">Checkout</h1>
-      <p className="opacity-70 text-sm mb-8">{listing.title} — KSh {Number(listing.price).toLocaleString()}</p>
+      <p className="opacity-70 text-sm mb-8">{listing.title} - KSh {Number(listing.price).toLocaleString()}</p>
 
       {step === 1 && (
         <div>
@@ -142,7 +142,7 @@ export default function Checkout() {
             className="w-full py-3 rounded-full font-medium disabled:opacity-50"
             style={{ background: 'var(--color-terracotta)', color: '#0E0F0D' }}
           >
-            {submitting ? 'Submitting…' : 'Submit for escrow verification'}
+            {submitting ? 'Submittingâ€¦' : 'Submit for escrow verification'}
           </button>
         </div>
       )}

@@ -26,7 +26,7 @@ export default function ProductDetail() {
     load()
   }, [id])
 
-  if (loading) return <div className="max-w-6xl mx-auto px-4 py-20 opacity-60">Loading…</div>
+  if (loading) return <div className="max-w-6xl mx-auto px-4 py-20 opacity-60">Loadingâ€¦</div>
   if (!listing) return <div className="max-w-6xl mx-auto px-4 py-20 opacity-60">Listing not found.</div>
 
   function handleBuy() {
@@ -70,12 +70,12 @@ export default function ProductDetail() {
         {seller && (
           <div className="p-4 rounded-2xl border border-white/10 mb-8">
             <div className="text-sm font-medium">{seller.full_name}</div>
-            <div className="text-xs opacity-60 capitalize">{seller.seller_type?.replace('_', ' ')} · {seller.verification_status === 'verified' ? '✓ Verified seller' : 'Verification pending'}</div>
+            <div className="text-xs opacity-60 capitalize">{seller.seller_type?.replace('_', ' ')} Â· {seller.verification_status === 'verified' ? 'âœ“ Verified seller' : 'Verification pending'}</div>
           </div>
         )}
 
         <div className="p-4 rounded-2xl mb-6 text-sm" style={{ background: 'var(--color-ink-3)', border: '1px solid var(--color-line)' }}>
-          <span style={{ color: 'var(--color-teal)' }} className="font-medium">Escrow protected — </span>
+          <span style={{ color: 'var(--color-teal)' }} className="font-medium">Escrow protected - </span>
           your payment is held until you confirm the item matches this listing.
         </div>
 

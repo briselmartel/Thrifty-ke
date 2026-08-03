@@ -61,7 +61,7 @@ export default function Sell() {
   return (
     <div className="max-w-xl mx-auto px-4 sm:px-6 py-16">
       <h1 className="font-display text-3xl mb-2">List an item</h1>
-      <p className="opacity-70 text-sm mb-8">Clear photos and honest descriptions sell faster — and keep your escrow disputes at zero.</p>
+      <p className="opacity-70 text-sm mb-8">Clear photos and honest descriptions sell faster - and keep your escrow disputes at zero.</p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -144,7 +144,7 @@ export default function Sell() {
           className="w-full py-3 rounded-full font-medium disabled:opacity-50"
           style={{ background: 'var(--color-terracotta)', color: '#0E0F0D' }}
         >
-          {uploading ? 'Publishing…' : 'Publish listing'}
+          {uploading ? 'Publishingâ€¦' : 'Publish listing'}
         </button>
       </form>
     </div>

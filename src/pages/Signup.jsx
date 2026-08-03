@@ -38,7 +38,7 @@ export default function Signup() {
   if (confirmationSent) {
     return (
       <div className="max-w-md mx-auto px-4 sm:px-6 py-20 text-center">
-        <div className="text-4xl mb-4" style={{ color: 'var(--color-gold)' }}>✓</div>
+        <div className="text-4xl mb-4" style={{ color: 'var(--color-gold)' }}>âœ“</div>
         <h1 className="font-display text-3xl mb-3">Check your email</h1>
         <p className="opacity-75 mb-6">
           We've sent a confirmation link to <strong>{form.email}</strong>. Click it to activate your account, then log in.
@@ -138,7 +138,7 @@ export default function Signup() {
           className="w-full py-3 rounded-full font-medium disabled:opacity-50"
           style={{ background: 'var(--color-terracotta)', color: '#0E0F0D' }}
         >
-          {loading ? 'Creating account…' : 'Create account'}
+          {loading ? 'Creating accountâ€¦' : 'Create account'}
         </button>
       </form>
 

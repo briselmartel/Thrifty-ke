@@ -15,11 +15,11 @@ export default function OrderConfirmation() {
     load()
   }, [orderId])
 
-  if (!order) return <div className="max-w-xl mx-auto px-4 py-20 opacity-60">Loading…</div>
+  if (!order) return <div className="max-w-xl mx-auto px-4 py-20 opacity-60">Loadingâ€¦</div>
 
   return (
     <div className="max-w-xl mx-auto px-4 sm:px-6 py-20 text-center">
-      <div className="text-4xl mb-4" style={{ color: 'var(--color-gold)' }}>✓</div>
+      <div className="text-4xl mb-4" style={{ color: 'var(--color-gold)' }}>âœ“</div>
       <h1 className="font-display text-3xl mb-3">Order received</h1>
       <p className="opacity-75 mb-8">
         We're verifying your payment for <strong>{order.listings?.title}</strong>. Once confirmed, your order moves to escrow-held and the seller is notified to ship.

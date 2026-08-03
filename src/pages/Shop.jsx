@@ -29,7 +29,7 @@ export default function Shop() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <h1 className="font-display text-3xl">Browse</h1>
         <input
-          placeholder="Search listings…"
+          placeholder="Search listingsâ€¦"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="px-4 py-2 rounded-full bg-[var(--color-ink-3)] border border-white/15 focus:border-[var(--color-gold)] outline-none w-full sm:w-64 text-sm"
@@ -54,7 +54,7 @@ export default function Shop() {
         ))}
       </div>
 
-      {loading && <p className="opacity-60 text-sm">Loading…</p>}
+      {loading && <p className="opacity-60 text-sm">Loadingâ€¦</p>}
       {!loading && listings.length === 0 && (
         <div className="text-center py-20 opacity-60">
           <p className="font-display text-xl mb-2">Nothing here yet.</p>

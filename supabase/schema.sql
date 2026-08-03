@@ -1,6 +1,6 @@
 -- ============================================================
--- Thrifty.ke — Supabase schema
--- Run this in Supabase Dashboard → SQL Editor → New query → Run
+-- Thrifty.ke - Supabase schema
+-- Run this in Supabase Dashboard â†’ SQL Editor â†’ New query â†’ Run
 -- ============================================================
 
 -- 1. PROFILES ---------------------------------------------------
@@ -9,7 +9,7 @@ create table if not exists profiles (
 );
 
 -- Add any columns that might be missing if this table was partially
--- created in an earlier run (safe to re-run — does nothing if already present).
+-- created in an earlier run (safe to re-run - does nothing if already present).
 alter table profiles add column if not exists full_name text;
 alter table profiles add column if not exists email text;
 alter table profiles add column if not exists role text default 'buyer';
@@ -31,6 +31,40 @@ create policy "Users can insert their own profile"
 drop policy if exists "Users can update their own profile" on profiles;
 create policy "Users can update their own profile"
   on profiles for update using (auth.uid() = id);
+
+-- ============================================================
+-- AUTO-CREATE PROFILE ON SIGNUP
+-- With email confirmation turned on, a new user has no active
+-- session until they click the confirmation link - so the browser
+-- can't insert their profile row itself (RLS blocks it). This
+-- trigger creates the profile server-side the instant the account
+-- is created, using the metadata passed at signup, so it works
+-- whether or not the email has been confirmed yet.
+-- ============================================================
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  insert into public.profiles (id, full_name, email, role, seller_type, verification_status)
+  values (
+    new.id,
+    new.raw_user_meta_data->>'full_name',
+    new.email,
+    coalesce(new.raw_user_meta_data->>'role', 'buyer'),
+    new.raw_user_meta_data->>'seller_type',
+    case when new.raw_user_meta_data->>'role' = 'seller' then 'unverified' else null end
+  )
+  on conflict (id) do nothing;
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function public.handle_new_user();
 
 -- 2. LISTINGS -----------------------------------------------------
 create table if not exists listings (
@@ -109,7 +143,7 @@ create policy "Admins can update any profile"
 
 -- ============================================================
 -- STORAGE BUCKETS
--- Create these in Supabase Dashboard → Storage → New bucket
+-- Create these in Supabase Dashboard â†’ Storage â†’ New bucket
 --   1. listing-images  (Public bucket)
 --   2. order-photos  (Public bucket is simplest for MVP;
 --      switch to private + signed URLs once you have time)

@@ -42,7 +42,7 @@ export default function Dashboard() {
         <h1 className="font-display text-3xl mb-1">Hi {profile?.full_name?.split(' ')[0] || ''}</h1>
         <p className="opacity-60 text-sm capitalize">
           {profile?.role} account
-          {profile?.seller_type && ` · ${profile.seller_type.replace('_', ' ')}`}
+          {profile?.seller_type && ` Â· ${profile.seller_type.replace('_', ' ')}`}
           {profile?.role === 'seller' && (
             <span className="ml-2 px-2 py-0.5 rounded-full text-xs" style={{ background: profile.verification_status === 'verified' ? 'var(--color-teal)' : 'var(--color-ink-3)', color: profile.verification_status === 'verified' ? '#0E0F0D' : 'inherit' }}>
               {profile.verification_status === 'verified' ? 'Verified' : 'Verification pending'}
@@ -59,7 +59,7 @@ export default function Dashboard() {
               + New listing
             </Link>
           </div>
-          {loading && <p className="opacity-60 text-sm">Loading…</p>}
+          {loading && <p className="opacity-60 text-sm">Loadingâ€¦</p>}
           {!loading && listings.length === 0 && <p className="opacity-60 text-sm">You haven't listed anything yet.</p>}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {listings.map((l) => <ProductCard key={l.id} listing={l} />)}
@@ -69,8 +69,8 @@ export default function Dashboard() {
 
       <section>
         <h2 className="font-display text-2xl mb-4">My orders</h2>
-        {loading && <p className="opacity-60 text-sm">Loading…</p>}
-        {!loading && orders.length === 0 && <p className="opacity-60 text-sm">No orders yet — <Link to="/shop" className="underline" style={{ color: 'var(--color-gold)' }}>start browsing</Link>.</p>}
+        {loading && <p className="opacity-60 text-sm">Loadingâ€¦</p>}
+        {!loading && orders.length === 0 && <p className="opacity-60 text-sm">No orders yet - <Link to="/shop" className="underline" style={{ color: 'var(--color-gold)' }}>start browsing</Link>.</p>}
         <div className="space-y-3">
           {orders.map((o) => (
             <div key={o.id} className="flex items-center justify-between p-4 rounded-2xl border border-white/10">

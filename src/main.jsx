@@ -23,7 +23,7 @@ VITE_SUPABASE_ANON_KEY=your-anon-key`}
         </pre>
         <p style={{ opacity: 0.7, lineHeight: 1.6, marginTop: 16, fontSize: 14 }}>
           Locally: put these in a <code>.env</code> file and restart <code>npm run dev</code>.<br />
-          On Vercel: add them under Project Settings → Environment Variables, then redeploy.
+          On Vercel: add them under Project Settings â†’ Environment Variables, then redeploy.
         </p>
       </div>
     </div>
