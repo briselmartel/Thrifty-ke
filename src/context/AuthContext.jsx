@@ -49,7 +49,7 @@ export function AuthProvider({ children }) {
       }
 
       // The profile row is created automatically by a database trigger
-      // (see supabase/schema.sql — handle_new_user), so it works even
+      // (see supabase/schema.sql - handle_new_user), so it works even
       // before the user confirms their email and has an active session.
       // needsConfirmation is true when email confirmation is required
       // and the user isn't logged in yet (no session returned).
