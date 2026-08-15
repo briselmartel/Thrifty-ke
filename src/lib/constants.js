@@ -48,3 +48,8 @@ export const BANK_DETAILS = {
   branch: 'Not required - Equity accounts can be paid to nationwide',
   swift: 'Add SWIFT/BIC if receiving from outside Kenya',
 }
+
+export const POCHI_DETAILS = {
+  name: 'Stacey Wangoi',
+  phone: '0799 505 257',
+}
