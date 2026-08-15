@@ -30,7 +30,7 @@ export function AuthProvider({ children }) {
     return () => listener.subscription.unsubscribe()
   }, [])
 
-  async function signUp({ email, password, fullName, role, sellerType }) {
+  async function signUp({ email, password, fullName, phone, role, sellerType }) {
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -38,6 +38,7 @@ export function AuthProvider({ children }) {
         options: {
           data: {
             full_name: fullName,
+            phone,
             role,
             seller_type: role === 'seller' ? sellerType : null,
           },

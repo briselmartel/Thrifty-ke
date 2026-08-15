@@ -2,6 +2,7 @@ export const CATEGORIES = [
   { slug: 'clothing', label: 'Clothing & Fashion' },
   { slug: 'electronics', label: 'Electronics' },
   { slug: 'furniture', label: 'Furniture & Seats' },
+  { slug: 'interior_design', label: 'Interior Design & Decor' },
   { slug: 'home', label: 'Home & Living' },
   { slug: 'kids', label: 'Kids & Baby' },
   { slug: 'beauty', label: 'Beauty & Personal Care' },

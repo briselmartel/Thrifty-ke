@@ -3,6 +3,7 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Landing from './pages/Landing'
 import Shop from './pages/Shop'
+import Mitumba from './pages/Mitumba'
 import ProductDetail from './pages/ProductDetail'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
@@ -22,6 +23,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/shop" element={<Shop />} />
+          <Route path="/mitumba" element={<Mitumba />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />

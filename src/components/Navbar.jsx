@@ -16,6 +16,7 @@ export default function Navbar() {
 
         <nav className="hidden md:flex items-center gap-8 text-sm">
           <Link to="/shop" className="hover:text-[var(--color-gold)] transition-colors">Browse</Link>
+          <Link to="/mitumba" className="hover:text-[var(--color-gold)] transition-colors">Mitumba</Link>
           <Link to="/how-it-works" className="hover:text-[var(--color-gold)] transition-colors">How escrow works</Link>
           {profile?.role === 'seller' && (
             <Link to="/sell" className="hover:text-[var(--color-gold)] transition-colors">Sell an item</Link>
@@ -65,6 +66,7 @@ export default function Navbar() {
       {open && (
         <div className="md:hidden px-4 pb-4 flex flex-col gap-3 border-t border-white/10">
           <Link to="/shop" onClick={() => setOpen(false)} className="py-2">Browse</Link>
+          <Link to="/mitumba" onClick={() => setOpen(false)} className="py-2">Mitumba</Link>
           <Link to="/how-it-works" onClick={() => setOpen(false)} className="py-2">How escrow works</Link>
           {profile?.role === 'seller' && <Link to="/sell" onClick={() => setOpen(false)} className="py-2">Sell an item</Link>}
           {user ? (
