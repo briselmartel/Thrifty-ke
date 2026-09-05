@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
 import { useAuth } from '../context/AuthContext'
 import { BANK_DETAILS, POCHI_DETAILS, CONTACT, ORDER_STATUS } from '../lib/constants'
@@ -27,7 +27,7 @@ export default function Checkout() {
   }, [listingId])
 
   if (!user) { navigate('/login'); return null }
-  if (!listing) return <div className="max-w-xl mx-auto px-4 py-20 opacity-60">Loading…</div>
+  if (!listing) return <div className="max-w-xl mx-auto px-4 py-20 opacity-60">Loading...</div>
 
   async function handleConfirm() {
     setError('')
@@ -43,11 +43,27 @@ export default function Checkout() {
         proofUrl = pub.publicUrl
       }
 
+      // The orders table has a newer set of required columns (item_price,
+      // delivery_fee, platform_fee, seller_payout, total_charged) added by a
+      // separate schema upgrade. No delivery/platform fee logic exists yet,
+      // so these default to 0 for now - the full item price goes to the
+      // seller until real fee logic is built.
+      const itemPrice = Number(listing.price)
+      const deliveryFee = 0
+      const platformFee = 0
+      const sellerPayout = itemPrice - platformFee
+      const totalCharged = itemPrice + deliveryFee
+
       const { data: order, error: insertError } = await supabase.from('orders').insert({
         listing_id: listing.id,
         buyer_id: user.id,
         seller_id: listing.seller_id,
-        amount: listing.price,
+        amount: itemPrice,
+        item_price: itemPrice,
+        delivery_fee: deliveryFee,
+        platform_fee: platformFee,
+        seller_payout: sellerPayout,
+        total_charged: totalCharged,
         status: proofUrl ? ORDER_STATUS.PAYMENT_SUBMITTED : ORDER_STATUS.PENDING_PAYMENT,
         payment_method: paymentMethod,
         payment_reference: reference || null,
@@ -59,8 +75,6 @@ export default function Checkout() {
 
       await supabase.from('listings').update({ status: 'reserved' }).eq('id', listing.id)
 
-      // Send the order receipt email. This never blocks checkout - if the
-      // email fails for any reason, the order still goes through fine.
       supabase.functions.invoke('send-order-email', { body: { order_id: order.id } }).catch((emailErr) => {
         console.warn('Order email failed to send:', emailErr)
       })
@@ -132,6 +146,11 @@ export default function Checkout() {
             </div>
           )}
 
+          <p className="text-xs opacity-60 text-center mb-4">
+            Payments are received and manually verified by the founder before any order moves forward.{' '}
+            <Link to="/about" className="underline" style={{ color: 'var(--color-gold)' }}>Read why we do it this way</Link>.
+          </p>
+
           <button
             onClick={() => setStep(2)}
             className="w-full py-3 rounded-full font-medium"
@@ -185,7 +204,7 @@ export default function Checkout() {
             className="w-full py-3 rounded-full font-medium disabled:opacity-50"
             style={{ background: 'var(--color-terracotta)', color: '#0E0F0D' }}
           >
-            {submitting ? 'Submitting…' : 'Submit for escrow verification'}
+            {submitting ? 'Submitting...' : 'Submit for escrow verification'}
           </button>
         </div>
       )}
