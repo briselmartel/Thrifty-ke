@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
 import { useAuth } from '../context/AuthContext'
 
@@ -11,6 +11,9 @@ export default function ProductDetail() {
   const [seller, setSeller] = useState(null)
   const [activeImg, setActiveImg] = useState(0)
   const [loading, setLoading] = useState(true)
+
+  const dot = '\u00b7'
+  const checkmark = '\u2713'
 
   useEffect(() => {
     async function load() {
@@ -26,7 +29,7 @@ export default function ProductDetail() {
     load()
   }, [id])
 
-  if (loading) return <div className="max-w-6xl mx-auto px-4 py-20 opacity-60">Loadingâ€¦</div>
+  if (loading) return <div className="max-w-6xl mx-auto px-4 py-20 opacity-60">Loading...</div>
   if (!listing) return <div className="max-w-6xl mx-auto px-4 py-20 opacity-60">Listing not found.</div>
 
   function handleBuy() {
@@ -63,6 +66,7 @@ export default function ProductDetail() {
           <span className="px-3 py-1 rounded-full border border-white/15">{listing.condition}</span>
           <span className="px-3 py-1 rounded-full border border-white/15 capitalize">{listing.category}</span>
           {listing.size && <span className="px-3 py-1 rounded-full border border-white/15">Size {listing.size}</span>}
+          {listing.city && <span className="px-3 py-1 rounded-full border border-white/15">{listing.city}</span>}
         </div>
 
         <p className="opacity-80 leading-relaxed mb-8 whitespace-pre-line">{listing.description}</p>
@@ -70,7 +74,9 @@ export default function ProductDetail() {
         {seller && (
           <div className="p-4 rounded-2xl border border-white/10 mb-8">
             <div className="text-sm font-medium">{seller.full_name}</div>
-            <div className="text-xs opacity-60 capitalize">{seller.seller_type?.replace('_', ' ')} Â· {seller.verification_status === 'verified' ? 'âœ“ Verified seller' : 'Verification pending'}</div>
+            <div className="text-xs opacity-60 capitalize">
+              {seller.seller_type?.replace('_', ' ')} {dot} {seller.verification_status === 'verified' ? `${checkmark} Verified seller` : 'Verification pending'}
+            </div>
           </div>
         )}
 
