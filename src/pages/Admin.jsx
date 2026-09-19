@@ -1,8 +1,9 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useAuth } from '../context/AuthContext'
 import { ORDER_STATUS } from '../lib/constants'
 
+// Admin access is controlled by profiles.is_admin = true (set manually in Supabase table editor).
 export default function Admin() {
   const { profile } = useAuth()
   const [sellers, setSellers] = useState([])
@@ -37,19 +38,24 @@ export default function Admin() {
     loadAll()
   }
 
+  const dot = '\u00b7'
+
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
       <h1 className="font-display text-3xl mb-8">Admin</h1>
 
       <section className="mb-14">
         <h2 className="font-display text-2xl mb-4">Seller verification</h2>
-        {loading && <p className="opacity-60 text-sm">Loading{'\u2026'}</p>}
+        {loading && <p className="opacity-60 text-sm">Loading...</p>}
         <div className="space-y-3">
           {sellers.map((s) => (
             <div key={s.id} className="flex items-center justify-between p-4 rounded-2xl border border-white/10">
               <div>
                 <div className="text-sm font-medium">{s.full_name} <span className="opacity-50">({s.email})</span></div>
-                <div className="text-xs opacity-60 capitalize">{s.seller_type?.replace('_', ' ')} {'\u00B7'} {s.verification_status}{s.phone &&  \u00B7 }</div>
+                <div className="text-xs opacity-60 capitalize">
+                  {s.seller_type?.replace('_', ' ')} {dot} {s.verification_status}
+                  {s.phone && ` ${dot} ${s.phone}`}
+                </div>
               </div>
               <div className="flex gap-2">
                 <button onClick={() => verifySeller(s.id, 'verified')} className="text-xs px-3 py-2 rounded-full" style={{ background: 'var(--color-teal)', color: '#0E0F0D' }}>Verify</button>
@@ -67,7 +73,7 @@ export default function Admin() {
             <div key={o.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl border border-white/10">
               <div>
                 <div className="text-sm font-medium">{o.listings?.title}</div>
-                <div className="text-xs opacity-60">Buyer: {o.profiles?.full_name} {'\u00B7'} KSh {Number(o.amount).toLocaleString()} {'\u00B7'} {o.payment_reference || 'no ref'}</div>
+                <div className="text-xs opacity-60">Buyer: {o.profiles?.full_name} {dot} KSh {Number(o.amount).toLocaleString()} {dot} {o.payment_reference || 'no ref'}</div>
                 {o.payment_proof_url && <a href={o.payment_proof_url} target="_blank" rel="noreferrer" className="text-xs underline" style={{ color: 'var(--color-gold)' }}>View proof</a>}
               </div>
               <select
