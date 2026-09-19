@@ -14,7 +14,7 @@ export default function Mitumba() {
         .from('listings')
         .select('*, profiles!inner(id, full_name, seller_type)')
         .eq('status', 'active')
-        .eq('category', 'clothing')
+        .eq('category', 'thrift')
         .eq('profiles.seller_type', 'thrift_store')
         .order('created_at', { ascending: false })
 
@@ -53,7 +53,7 @@ export default function Mitumba() {
       </section>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-        {loading && <p className="opacity-60 text-sm">Setting up the racks…</p>}
+        {loading && <p className="opacity-60 text-sm">Setting up the racks...</p>}
 
         {!loading && racks.length === 0 && (
           <div className="text-center py-20 opacity-60">
