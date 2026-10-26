@@ -1,92 +1,120 @@
 import { useEffect, useState } from 'react'
-import { supabase } from '../lib/supabaseClient'
-import { useAuth } from '../context/AuthContext'
-import { ORDER_STATUS } from '../lib/constants'
+import { supabase } from '../lib/supabase' // or your existing supabase client
+import { Link } from 'react-router-dom'
 
-// Admin access is controlled by profiles.is_admin = true (set manually in Supabase table editor).
+// Replace with your exact Thrifty login email
+const ADMIN_EMAIL = 'your-login-email@gmail.com'
+
 export default function Admin() {
-  const { profile } = useAuth()
-  const [sellers, setSellers] = useState([])
-  const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
+  const [currentUser, setCurrentUser] = useState(null)
+  const [usersList, setUsersList] = useState([])
+  const [errorMsg, setErrorMsg] = useState('')
 
-  async function loadAll() {
-    setLoading(true)
-    const { data: sellerData } = await supabase.from('profiles').select('*').eq('role', 'seller').order('created_at', { ascending: false })
-    setSellers(sellerData || [])
-    const { data: orderData } = await supabase
-      .from('orders')
-      .select('*, listings(title), profiles!orders_buyer_id_fkey(full_name)')
-      .order('created_at', { ascending: false })
-    setOrders(orderData || [])
-    setLoading(false)
+  useEffect(() => {
+    async function initAdmin() {
+      // 1. Get logged in user
+      const { data: { user } } = await supabase.auth.getUser()
+      setCurrentUser(user)
+
+      if (!user || user.email !== ADMIN_EMAIL) {
+        setLoading(false)
+        return
+      }
+
+      // 2. Fetch users/profiles from database
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        // Fallback if table is named 'users' instead of 'profiles'
+        const alt = await supabase.from('users').select('*')
+        if (alt.error) {
+          setErrorMsg(error.message)
+        } else {
+          setUsersList(alt.data || [])
+        }
+      } else {
+        setUsersList(data || [])
+      }
+
+      setLoading(false)
+    }
+
+    initAdmin()
+  }, [])
+
+  if (loading) {
+    return <div className="p-10 text-center text-gray-600">Verifying admin access...</div>
   }
 
-  useEffect(() => { loadAll() }, [])
-
-  if (!profile?.is_admin) {
-    return <div className="max-w-xl mx-auto px-4 py-20 opacity-60 text-center">You don't have access to this page.</div>
+  // Not signed in with admin email
+  if (!currentUser || currentUser.email !== ADMIN_EMAIL) {
+    return (
+      <div className="max-w-md mx-auto my-16 p-6 border rounded-lg text-center bg-white shadow-sm">
+        <h2 className="text-xl font-bold text-red-600 mb-2">Admin Access Required</h2>
+        <p className="text-sm text-gray-600 mb-4">
+          Please log in with the administrator account to view sign-ups.
+        </p>
+        <Link to="/login" className="inline-block bg-black text-white px-4 py-2 rounded text-sm font-medium">
+          Go to Login
+        </Link>
+      </div>
+    )
   }
-
-  async function verifySeller(id, status) {
-    await supabase.from('profiles').update({ verification_status: status }).eq('id', id)
-    loadAll()
-  }
-
-  async function updateOrderStatus(id, status) {
-    await supabase.from('orders').update({ status }).eq('id', id)
-    loadAll()
-  }
-
-  const dot = '\u00b7'
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
-      <h1 className="font-display text-3xl mb-8">Admin</h1>
-
-      <section className="mb-14">
-        <h2 className="font-display text-2xl mb-4">Seller verification</h2>
-        {loading && <p className="opacity-60 text-sm">Loading...</p>}
-        <div className="space-y-3">
-          {sellers.map((s) => (
-            <div key={s.id} className="flex items-center justify-between p-4 rounded-2xl border border-white/10">
-              <div>
-                <div className="text-sm font-medium">{s.full_name} <span className="opacity-50">({s.email})</span></div>
-                <div className="text-xs opacity-60 capitalize">
-                  {s.seller_type?.replace('_', ' ')} {dot} {s.verification_status}
-                  {s.phone && ` ${dot} ${s.phone}`}
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <button onClick={() => verifySeller(s.id, 'verified')} className="text-xs px-3 py-2 rounded-full" style={{ background: 'var(--color-teal)', color: '#0E0F0D' }}>Verify</button>
-                <button onClick={() => verifySeller(s.id, 'rejected')} className="text-xs px-3 py-2 rounded-full border border-white/15">Reject</button>
-              </div>
-            </div>
-          ))}
+    <div className="max-w-5xl mx-auto px-4 py-10">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+          <p className="text-sm text-gray-500">Thrifty Registered Members</p>
         </div>
-      </section>
-
-      <section>
-        <h2 className="font-display text-2xl mb-4">Escrow & orders</h2>
-        <div className="space-y-3">
-          {orders.map((o) => (
-            <div key={o.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl border border-white/10">
-              <div>
-                <div className="text-sm font-medium">{o.listings?.title}</div>
-                <div className="text-xs opacity-60">Buyer: {o.profiles?.full_name} {dot} KSh {Number(o.amount).toLocaleString()} {dot} {o.payment_reference || 'no ref'}</div>
-                {o.payment_proof_url && <a href={o.payment_proof_url} target="_blank" rel="noreferrer" className="text-xs underline" style={{ color: 'var(--color-gold)' }}>View proof</a>}
-              </div>
-              <select
-                value={o.status}
-                onChange={(e) => updateOrderStatus(o.id, e.target.value)}
-                className="text-xs px-3 py-2 rounded-full bg-[var(--color-ink-3)] border border-white/15"
-              >
-                {Object.values(ORDER_STATUS).map((s) => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
-              </select>
-            </div>
-          ))}
+        <div className="bg-emerald-100 text-emerald-800 text-xs px-3 py-1.5 rounded-full font-semibold">
+          Total Users: {usersList.length}
         </div>
-      </section>
+      </div>
+
+      {errorMsg && (
+        <div className="mb-4 p-3 bg-amber-50 text-amber-800 rounded text-sm border border-amber-200">
+          Notice: {errorMsg}
+        </div>
+      )}
+
+      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+        <table className="w-full text-left text-sm">
+          <thead className="bg-gray-50 border-b border-gray-200 text-gray-600 font-semibold">
+            <tr>
+              <th className="p-4">User</th>
+              <th className="p-4">User ID</th>
+              <th className="p-4">Registered Date</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {usersList.length === 0 ? (
+              <tr>
+                <td colSpan={3} className="p-6 text-center text-gray-500">
+                  No member records found yet.
+                </td>
+              </tr>
+            ) : (
+              usersList.map((u, i) => (
+                <tr key={u.id || i} className="hover:bg-gray-50">
+                  <td className="p-4 font-medium text-gray-900">
+                    {u.email || u.full_name || u.username || 'Registered Member'}
+                  </td>
+                  <td className="p-4 font-mono text-xs text-gray-500">{u.id}</td>
+                  <td className="p-4 text-gray-500">
+                    {u.created_at ? new Date(u.created_at).toLocaleDateString() : 'N/A'}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
