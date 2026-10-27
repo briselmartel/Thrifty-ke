@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase' // or your existing supabase client
 import { Link } from 'react-router-dom'
 
 // Replace with your exact Thrifty login email
-const ADMIN_EMAIL = 'your-login-email@gmail.com'
+const ADMIN_EMAIL = 'kaixaden6@gmail.com'
 
 export default function Admin() {
   const [loading, setLoading] = useState(true)
