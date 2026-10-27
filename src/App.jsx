@@ -13,6 +13,7 @@ import Checkout from './pages/Checkout'
 import OrderConfirmation from './pages/OrderConfirmation'
 import Admin from './pages/Admin'
 import HowItWorks from './pages/HowItWorks'
+import EditListing from './pages/EditListing'
 import NotFound from './pages/NotFound'
 
 export default function App() {
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/how-it-works" element={<HowItWorks />} />
+          <Route path="/edit/:id" element={<EditListing />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

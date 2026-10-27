@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
 import { useAuth } from '../context/AuthContext'
+
+const ADMIN_EMAIL = 'kaixaden6@gmail.com'
 
 export default function ProductDetail() {
   const { id } = useParams()
@@ -11,6 +13,7 @@ export default function ProductDetail() {
   const [seller, setSeller] = useState(null)
   const [activeImg, setActiveImg] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [copied, setCopied] = useState(false)
 
   const dot = '\u00b7'
   const checkmark = '\u2713'
@@ -36,6 +39,22 @@ export default function ProductDetail() {
     if (!user) { navigate('/login'); return }
     navigate(`/checkout/${listing.id}`)
   }
+
+  async function handleShare() {
+    const url = `${window.location.origin}/product/${listing.id}?ref=share`
+    const text = `${listing.title} - KSh ${Number(listing.price).toLocaleString()} on Thrifty`
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: listing.title, text, url })
+      } else {
+        await navigator.clipboard.writeText(url)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      }
+    } catch (e) {}
+  }
+
+  const canEdit = user && (user.id === listing.seller_id || user.email === ADMIN_EMAIL)
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 grid md:grid-cols-2 gap-10">
@@ -92,6 +111,19 @@ export default function ProductDetail() {
         >
           Buy with escrow protection
         </button>
+
+        <button
+          onClick={handleShare}
+          className="w-full py-3 rounded-full font-medium mt-3 border border-white/20"
+        >
+          {copied ? 'Link copied!' : 'Share this item'}
+        </button>
+
+        {canEdit && (
+          <Link to={`/edit/${listing.id}`} className="block text-center w-full py-3 rounded-full font-medium mt-3 border border-white/20">
+            Edit this listing
+          </Link>
+        )}
       </div>
     </div>
   )
