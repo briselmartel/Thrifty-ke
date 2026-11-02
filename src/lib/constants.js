@@ -11,6 +11,7 @@ export const CATEGORIES = [
   { slug: 'sports', label: 'Sports' },
   { slug: 'bulk', label: 'Bulk / Wholesale' },
   { slug: 'art', label: 'Interior Design & Decor' },
+   { slug: 'accounts', label: 'Digital Accounts' },
 ]
 
 // Seller types - clothing sellers get the extra "thrift store" option
