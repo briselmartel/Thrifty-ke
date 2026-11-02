@@ -12,7 +12,10 @@ export default function Sell() {
   })
   const [files, setFiles] = useState([])
   const [uploading, setUploading] = useState(false)
+  const [agreed, setAgreed] = useState(false)
   const [error, setError] = useState('')
+
+  const isAccount = form.category === 'accounts'
 
   if (!user) {
     return <div className="max-w-xl mx-auto px-4 py-20 text-center opacity-70">Please log in as a seller to list an item.</div>
@@ -25,6 +28,7 @@ export default function Sell() {
     e.preventDefault()
     setError('')
     if (!form.title || !form.price) { setError('Title and price are required.'); return }
+    if (isAccount && !agreed) { setError('Please confirm the account listing rules before publishing.'); return }
     setUploading(true)
 
     try {
@@ -58,6 +62,8 @@ export default function Sell() {
     }
   }
 
+  const input = 'w-full px-4 py-3 rounded-xl bg-[var(--color-ink-3)] border border-white/15 focus:border-[var(--color-gold)] outline-none'
+
   return (
     <div className="max-w-xl mx-auto px-4 sm:px-6 py-16">
       <h1 className="font-display text-3xl mb-2">List an item</h1>
@@ -80,7 +86,7 @@ export default function Sell() {
             required
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
-            className="w-full px-4 py-3 rounded-xl bg-[var(--color-ink-3)] border border-white/15 focus:border-[var(--color-gold)] outline-none"
+            className={input}
           />
         </div>
         <div>
@@ -89,7 +95,8 @@ export default function Sell() {
             rows={4}
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
-            className="w-full px-4 py-3 rounded-xl bg-[var(--color-ink-3)] border border-white/15 focus:border-[var(--color-gold)] outline-none"
+            className={input}
+            placeholder={isAccount ? 'Platform, account age, what is included, any stats. Do NOT put the username, password or recovery details here.' : ''}
           />
         </div>
         <div className="grid grid-cols-2 gap-4">
@@ -101,7 +108,7 @@ export default function Sell() {
               min="0"
               value={form.price}
               onChange={(e) => setForm({ ...form, price: e.target.value })}
-              className="w-full px-4 py-3 rounded-xl bg-[var(--color-ink-3)] border border-white/15 focus:border-[var(--color-gold)] outline-none"
+              className={input}
             />
           </div>
           <div>
@@ -109,7 +116,7 @@ export default function Sell() {
             <input
               value={form.size}
               onChange={(e) => setForm({ ...form, size: e.target.value })}
-              className="w-full px-4 py-3 rounded-xl bg-[var(--color-ink-3)] border border-white/15 focus:border-[var(--color-gold)] outline-none"
+              className={input}
             />
           </div>
         </div>
@@ -118,8 +125,8 @@ export default function Sell() {
             <label className="block text-sm mb-1 opacity-80">Category</label>
             <select
               value={form.category}
-              onChange={(e) => setForm({ ...form, category: e.target.value })}
-              className="w-full px-4 py-3 rounded-xl bg-[var(--color-ink-3)] border border-white/15 focus:border-[var(--color-gold)] outline-none"
+              onChange={(e) => { setForm({ ...form, category: e.target.value }); setAgreed(false) }}
+              className={input}
             >
               {CATEGORIES.map((c) => <option key={c.slug} value={c.slug}>{c.label}</option>)}
             </select>
@@ -129,12 +136,34 @@ export default function Sell() {
             <select
               value={form.condition}
               onChange={(e) => setForm({ ...form, condition: e.target.value })}
-              className="w-full px-4 py-3 rounded-xl bg-[var(--color-ink-3)] border border-white/15 focus:border-[var(--color-gold)] outline-none"
+              className={input}
             >
               {CONDITIONS.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
         </div>
+
+        {isAccount && (
+          <div className="p-5 rounded-2xl text-sm" style={{ background: 'var(--color-ink-3)', border: '1px solid var(--color-terracotta)' }}>
+            <h2 className="font-display text-lg mb-2" style={{ color: 'var(--color-terracotta)' }}>Rules for listing an account</h2>
+            <ul className="list-disc pl-5 space-y-1 opacity-85 mb-4">
+              <li>Never put the username, password or recovery details in the listing. Login details are only shared after the buyer has paid.</li>
+              <li>Only list accounts that are genuinely yours to sell.</li>
+              <li><strong>Not allowed:</strong> bank, M-Pesa, mobile money, betting or crypto accounts, accounts verified with someone else's ID, and hacked, stolen or shared accounts.</li>
+              <li>Some platforms do not allow accounts to be sold. The buyer accepts that risk, so describe the account honestly.</li>
+              <li>After the sale, you must not log in to the account again or use your old recovery email or phone to take it back. Doing so can lead to a ban and legal action.</li>
+            </ul>
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+                className="mt-1"
+              />
+              <span>I confirm this account is mine to sell, is not on the banned list, and I agree to these rules.</span>
+            </label>
+          </div>
+        )}
 
         {error && <p className="text-sm" style={{ color: 'var(--color-terracotta)' }}>{error}</p>}
 
@@ -144,7 +173,7 @@ export default function Sell() {
           className="w-full py-3 rounded-full font-medium disabled:opacity-50"
           style={{ background: 'var(--color-terracotta)', color: '#0E0F0D' }}
         >
-          {uploading ? 'Publishingâ€¦' : 'Publish listing'}
+          {uploading ? 'Publishing...' : 'Publish listing'}
         </button>
       </form>
     </div>
