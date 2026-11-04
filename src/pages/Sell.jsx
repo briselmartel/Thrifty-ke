@@ -1,14 +1,19 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
 import { useAuth } from '../context/AuthContext'
 import { CATEGORIES, CONDITIONS } from '../lib/constants'
+import { ACCOUNT_PLATFORMS } from '../lib/accountPlatforms'
 
 export default function Sell() {
   const { user, profile } = useAuth()
   const navigate = useNavigate()
+  const [params] = useSearchParams()
+  const startCategory = CATEGORIES.some((c) => c.slug === params.get('category')) ? params.get('category') : CATEGORIES[0].slug
+  const startPlatform = ACCOUNT_PLATFORMS.includes(params.get('platform')) ? params.get('platform') : ''
+
   const [form, setForm] = useState({
-    title: '', description: '', price: '', category: CATEGORIES[0].slug, condition: CONDITIONS[0], size: '',
+    title: '', description: '', price: '', category: startCategory, condition: CONDITIONS[0], size: '', platform: startPlatform,
   })
   const [files, setFiles] = useState([])
   const [uploading, setUploading] = useState(false)
@@ -28,6 +33,7 @@ export default function Sell() {
     e.preventDefault()
     setError('')
     if (!form.title || !form.price) { setError('Title and price are required.'); return }
+    if (isAccount && !form.platform) { setError('Please choose the platform for this account.'); return }
     if (isAccount && !agreed) { setError('Please confirm the account listing rules before publishing.'); return }
     setUploading(true)
 
@@ -49,6 +55,7 @@ export default function Sell() {
         category: form.category,
         condition: form.condition,
         size: form.size || null,
+        platform: isAccount ? form.platform : null,
         image_urls: imageUrls,
         status: 'active',
       })
@@ -142,6 +149,21 @@ export default function Sell() {
             </select>
           </div>
         </div>
+
+        {isAccount && (
+          <div>
+            <label className="block text-sm mb-1 opacity-80">Platform</label>
+            <select
+              required
+              value={form.platform}
+              onChange={(e) => setForm({ ...form, platform: e.target.value })}
+              className={input}
+            >
+              <option value="">Choose the platform...</option>
+              {ACCOUNT_PLATFORMS.map((p) => <option key={p} value={p}>{p}</option>)}
+            </select>
+          </div>
+        )}
 
         {isAccount && (
           <div className="p-5 rounded-2xl text-sm" style={{ background: 'var(--color-ink-3)', border: '1px solid var(--color-terracotta)' }}>

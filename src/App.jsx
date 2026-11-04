@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
-import Navbar from './components/Navbar'
+import Sidebar from './components/Sidebar'
 import Footer from './components/Footer'
 import Landing from './pages/Landing'
 import Shop from './pages/Shop'
@@ -14,31 +14,35 @@ import OrderConfirmation from './pages/OrderConfirmation'
 import Admin from './pages/Admin'
 import HowItWorks from './pages/HowItWorks'
 import EditListing from './pages/EditListing'
+import AccountsMarket from './pages/AccountsMarket'
 import NotFound from './pages/NotFound'
 
 export default function App() {
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-1">
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/shop" element={<Shop />} />
-          <Route path="/mitumba" element={<Mitumba />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/sell" element={<Sell />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/checkout/:listingId" element={<Checkout />} />
-          <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/how-it-works" element={<HowItWorks />} />
-          <Route path="/edit/:id" element={<EditListing />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </main>
-      <Footer />
+    <div className="min-h-screen md:flex">
+      <Sidebar />
+      <div className="flex-1 min-w-0 flex flex-col min-h-screen">
+        <main className="flex-1">
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/shop" element={<Shop />} />
+            <Route path="/mitumba" element={<Mitumba />} />
+            <Route path="/accounts" element={<AccountsMarket />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/sell" element={<Sell />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/checkout/:listingId" element={<Checkout />} />
+            <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/how-it-works" element={<HowItWorks />} />
+            <Route path="/edit/:id" element={<EditListing />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
     </div>
   )
-}
+}s
