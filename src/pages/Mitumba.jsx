@@ -10,26 +10,42 @@ export default function Mitumba() {
   useEffect(() => {
     async function load() {
       setLoading(true)
-      const { data, error } = await supabase
+
+      const { data: items, error } = await supabase
         .from('listings')
-        .select('*, profiles!inner(id, full_name, seller_type)')
+        .select('*')
         .eq('status', 'active')
         .eq('category', 'thrift')
-        .eq('profiles.seller_type', 'thrift_store')
         .order('created_at', { ascending: false })
 
-      if (!error && data) {
-        // Group into "racks" - one per store, like walking past a row of racks
-        const byStore = {}
-        for (const item of data) {
-          const storeId = item.profiles?.id
-          if (!byStore[storeId]) {
-            byStore[storeId] = { storeName: item.profiles?.full_name || 'Thrift Store', items: [] }
-          }
-          byStore[storeId].items.push(item)
-        }
-        setRacks(Object.values(byStore))
+      if (error || !items) {
+        setLoading(false)
+        return
       }
+
+      // Look up the stores that own these items from the safe public view
+      const sellerIds = [...new Set(items.map((i) => i.seller_id).filter(Boolean))]
+      const stores = {}
+      if (sellerIds.length > 0) {
+        const { data: profs } = await supabase
+          .from('public_profiles')
+          .select('id, full_name, seller_type')
+          .in('id', sellerIds)
+          .eq('seller_type', 'thrift_store')
+        for (const p of profs || []) stores[p.id] = p
+      }
+
+      // Group into "racks" - one per store, like walking past a row of racks
+      const byStore = {}
+      for (const item of items) {
+        const store = stores[item.seller_id]
+        if (!store) continue
+        if (!byStore[store.id]) {
+          byStore[store.id] = { storeName: store.full_name || 'Thrift Store', items: [] }
+        }
+        byStore[store.id].items.push(item)
+      }
+      setRacks(Object.values(byStore))
       setLoading(false)
     }
     load()
