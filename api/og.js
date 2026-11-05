@@ -1,5 +1,5 @@
 const SUPABASE_URL = 'https://hssjyreswltunyiarzdf.supabase.co'
-const SUPABASE_ANON_KEY = 'sb_publishable_y-6-66CMIMZhWU8Szx2vFg_Hiso1RkK'
+const SUPABASE_KEY = 'sb_publishable_y-6-66CMIMZhWU8Szx2vFg_Hiso1RkK'
 const SITE = 'https://thrifty-ke.vercel.app'
 
 export default async function handler(req, res) {
@@ -21,12 +21,7 @@ export default async function handler(req, res) {
   try {
     const r = await fetch(
       `${SUPABASE_URL}/rest/v1/listings?id=eq.${id}&select=title,description,price,image_urls`,
-      {
-        headers: {
-          apikey: SUPABASE_ANON_KEY,
-          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-        },
-      }
+      { headers: { apikey: SUPABASE_KEY } }
     )
     const rows = await r.json()
     item = Array.isArray(rows) ? rows[0] : null
