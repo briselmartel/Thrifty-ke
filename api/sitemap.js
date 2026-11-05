@@ -1,14 +1,17 @@
+const SUPABASE_URL = 'https://hssjyreswltunyiarzdf.supabase.co/rest/v1/'
+const SUPABASE_ANON_KEY = 'sb_publishable_y-6-66CMIMZhWU8Szx2vFg_Hiso1RkK'
+const SITE = 'https://thrifty-ke.vercel.app'
+
 export default async function handler(req, res) {
-  const site = 'https://thrifty-ke.vercel.app'
-  const pages = ['/', '/shop', '/mitumba', '/how-it-works']
+  const pages = ['/', '/shop', '/mitumba', '/how-it-works', '/accounts']
   let items = []
   try {
     const r = await fetch(
-      `$'https://hssjyreswltunyiarzdf.supabase.co/rest/v1/'status=eq.active&select=id,created_at&order=created_at.desc&limit=1000`,
+      `${SUPABASE_URL}/rest/v1/listings?status=eq.active&select=id,created_at&order=created_at.desc&limit=1000`,
       {
         headers: {
-          apikey: sb_publishable_y-6-66CMIMZhWU8Szx2vFg_Hiso1RkK,
-          Authorization: `Bearer ${sb_publishable_y-6-66CMIMZhWU8Szx2vFg_Hiso1RkK}`,
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
         },
       }
     )
@@ -17,17 +20,17 @@ export default async function handler(req, res) {
   } catch (e) {}
 
   const urls = [
-    ...pages.map((p) => `<url><loc>${site}${p}</loc></url>`),
+    ...pages.map((p) => `<url><loc>${SITE}${p}</loc></url>`),
     ...items.map(
       (i) =>
-        `<url><loc>${site}/product/${i.id}</loc>${
+        `<url><loc>${SITE}/product/${i.id}</loc>${
           i.created_at ? `<lastmod>${String(i.created_at).slice(0, 10)}</lastmod>` : ''
         }</url>`
     ),
   ]
 
   res.setHeader('Content-Type', 'application/xml; charset=utf-8')
-  res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400')
+  res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600')
   res.status(200).send(
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.join('')}</urlset>`
   )

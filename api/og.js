@@ -1,6 +1,9 @@
+const SUPABASE_URL = 'https://hssjyreswltunyiarzdf.supabase.co'
+const SUPABASE_ANON_KEY = 'sb_publishable_y-6-66CMIMZhWU8Szx2vFg_Hiso1RkK'
+const SITE = 'https://thrifty-ke.vercel.app'
+
 export default async function handler(req, res) {
   const id = String(req.query.id || '')
-  const site = 'https://thrifty-ke.vercel.app'
 
   if (!/^[a-zA-Z0-9-]+$/.test(id)) {
     res.status(400).send('Bad request')
@@ -17,11 +20,11 @@ export default async function handler(req, res) {
   let item = null
   try {
     const r = await fetch(
-      `${https://hssjyreswltunyiarzdf.supabase.co/rest/v1/}/rest/v1/listings?id=eq.${id}&select=title,description,price,image_urls`,
+      `${SUPABASE_URL}/rest/v1/listings?id=eq.${id}&select=title,description,price,image_urls`,
       {
         headers: {
-          apikey: sb_publishable_y-6-66CMIMZhWU8Szx2vFg_Hiso1RkK,
-          Authorization: `Bearer ${sb_publishable_y-6-66CMIMZhWU8Szx2vFg_Hiso1RkK}`,
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
         },
       }
     )
@@ -29,13 +32,13 @@ export default async function handler(req, res) {
     item = Array.isArray(rows) ? rows[0] : null
   } catch (e) {}
 
-  const url = `${site}/product/${id}`
+  const url = `${SITE}/product/${id}`
   const title = item
     ? `${item.title} - KSh ${Number(item.price).toLocaleString()}`
     : 'Thrifty - buy and sell pre-owned items safely'
   const desc = item
     ? (item.description || 'Escrow-protected on Thrifty.').slice(0, 160)
-    : 'Kenya\'s escrow-protected marketplace for pre-owned items.'
+    : "Kenya's escrow-protected marketplace for pre-owned items."
   const image = item && item.image_urls && item.image_urls[0] ? item.image_urls[0] : ''
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8')
