@@ -8,7 +8,7 @@ const ADMIN_EMAIL = 'kaixaden6@gmail.com'
 export default function ProductDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user, profile } = useAuth()
   const [listing, setListing] = useState(null)
   const [seller, setSeller] = useState(null)
   const [activeImg, setActiveImg] = useState(0)
@@ -40,21 +40,40 @@ export default function ProductDetail() {
     navigate(`/checkout/${listing.id}`)
   }
 
-  async function handleShare() {
-    const url = `${window.location.origin}/product/${listing.id}?ref=share`
-    const text = `${listing.title} - KSh ${Number(listing.price).toLocaleString()} on Thrifty`
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: listing.title, text, url })
-      } else {
-        await navigator.clipboard.writeText(url)
-        setCopied(true)
-        setTimeout(() => setCopied(false), 2000)
-      }
-    } catch (e) {}
+  function shareLink(source) {
+    return `${window.location.origin}/product/${listing.id}?ref=${source}`
   }
 
-  const canEdit = user && (user.id === listing.seller_id || user.email === ADMIN_EMAIL)
+  const shareText = `${listing.title} - KSh ${Number(listing.price).toLocaleString()} on Thrifty`
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareLink('whatsapp'))}`
+  const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareLink('facebook'))}`
+
+  async function handleCopy() {
+    const link = shareLink('copy')
+    let ok = false
+    try {
+      await navigator.clipboard.writeText(link)
+      ok = true
+    } catch (e) {
+      try {
+        const box = document.createElement('textarea')
+        box.value = link
+        document.body.appendChild(box)
+        box.select()
+        ok = document.execCommand('copy')
+        document.body.removeChild(box)
+      } catch (e2) {}
+    }
+    if (ok) {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2500)
+    }
+  }
+
+  const isAdmin = user && (user.email === ADMIN_EMAIL || profile?.is_admin === true || profile?.role === 'admin')
+  const canEdit = user && (user.id === listing.seller_id || isAdmin)
+
+  const shareBtn = 'text-center text-sm py-2 rounded-full border border-white/20 hover:border-[var(--color-gold)] transition-colors'
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 grid md:grid-cols-2 gap-10">
@@ -84,6 +103,7 @@ export default function ProductDetail() {
         <div className="flex flex-wrap gap-2 mb-6 text-xs">
           <span className="px-3 py-1 rounded-full border border-white/15">{listing.condition}</span>
           <span className="px-3 py-1 rounded-full border border-white/15 capitalize">{listing.category}</span>
+          {listing.platform && <span className="px-3 py-1 rounded-full border border-white/15">{listing.platform}</span>}
           {listing.size && <span className="px-3 py-1 rounded-full border border-white/15">Size {listing.size}</span>}
           {listing.city && <span className="px-3 py-1 rounded-full border border-white/15">{listing.city}</span>}
         </div>
@@ -112,12 +132,21 @@ export default function ProductDetail() {
           Buy with escrow protection
         </button>
 
-        <button
-          onClick={handleShare}
-          className="w-full py-3 rounded-full font-medium mt-3 border border-white/20"
-        >
-          {copied ? 'Link copied!' : 'Share this item'}
-        </button>
+        <div className="mt-3 p-4 rounded-2xl border border-white/10">
+          <div className="text-sm font-medium mb-3">Share this item</div>
+          <div className="grid grid-cols-3 gap-2 mb-3">
+            <a href={whatsappUrl} target="_blank" rel="noreferrer" className={shareBtn}>WhatsApp</a>
+            <a href={facebookUrl} target="_blank" rel="noreferrer" className={shareBtn}>Facebook</a>
+            <button type="button" onClick={handleCopy} className={shareBtn}>{copied ? 'Copied!' : 'Copy link'}</button>
+          </div>
+          <input
+            readOnly
+            value={shareLink('share')}
+            onFocus={(e) => e.target.select()}
+            onClick={(e) => e.target.select()}
+            className="w-full px-3 py-2 rounded-xl bg-[var(--color-ink-3)] border border-white/15 text-xs"
+          />
+        </div>
 
         {canEdit && (
           <Link to={`/edit/${listing.id}`} className="block text-center w-full py-3 rounded-full font-medium mt-3 border border-white/20">
