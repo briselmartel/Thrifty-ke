@@ -24,7 +24,7 @@ export default function ProductDetail() {
       const { data } = await supabase.from('listings').select('*').eq('id', id).single()
       setListing(data)
       if (data?.seller_id) {
-        const { data: sellerData } = await supabase.from('profiles').select('*').eq('id', data.seller_id).single()
+        const { data: sellerData } = await supabase.from('public_profiles').select('id, full_name, seller_type, verification_status').eq('id', data.seller_id).single()
         setSeller(sellerData)
       }
       setLoading(false)
