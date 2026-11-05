@@ -4,4 +4,4 @@ Disallow: /admin
 Disallow: /dashboard
 Disallow: /checkout/
 
-Sitemap: https://thrifty.ke/sitemap.xml
+Sitemap: https://thrifty-ke.vercel.app/sitemap.xml

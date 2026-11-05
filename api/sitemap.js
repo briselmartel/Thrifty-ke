@@ -1,14 +1,14 @@
 export default async function handler(req, res) {
-  const site = 'https://thrifty.ke'
+  const site = 'https://thrifty-ke.vercel.app'
   const pages = ['/', '/shop', '/mitumba', '/how-it-works']
   let items = []
   try {
     const r = await fetch(
-      `${process.env.SUPABASE_URL}/rest/v1/listings?status=eq.active&select=id,created_at&order=created_at.desc&limit=1000`,
+      `$'https://hssjyreswltunyiarzdf.supabase.co/rest/v1/'status=eq.active&select=id,created_at&order=created_at.desc&limit=1000`,
       {
         headers: {
-          apikey: process.env.SUPABASE_ANON_KEY,
-          Authorization: `Bearer ${process.env.SUPABASE_ANON_KEY}`,
+          apikey: sb_publishable_y-6-66CMIMZhWU8Szx2vFg_Hiso1RkK,
+          Authorization: `Bearer ${sb_publishable_y-6-66CMIMZhWU8Szx2vFg_Hiso1RkK}`,
         },
       }
     )

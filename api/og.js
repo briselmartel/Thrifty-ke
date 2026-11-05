@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
   const id = String(req.query.id || '')
-  const site = 'https://thrifty.ke'
+  const site = 'https://thrifty-ke.vercel.app'
 
   if (!/^[a-zA-Z0-9-]+$/.test(id)) {
     res.status(400).send('Bad request')
@@ -17,11 +17,11 @@ export default async function handler(req, res) {
   let item = null
   try {
     const r = await fetch(
-      `${process.env.SUPABASE_URL}/rest/v1/listings?id=eq.${id}&select=title,description,price,image_urls`,
+      `${https://hssjyreswltunyiarzdf.supabase.co/rest/v1/}/rest/v1/listings?id=eq.${id}&select=title,description,price,image_urls`,
       {
         headers: {
-          apikey: process.env.SUPABASE_ANON_KEY,
-          Authorization: `Bearer ${process.env.SUPABASE_ANON_KEY}`,
+          apikey: sb_publishable_y-6-66CMIMZhWU8Szx2vFg_Hiso1RkK,
+          Authorization: `Bearer ${sb_publishable_y-6-66CMIMZhWU8Szx2vFg_Hiso1RkK}`,
         },
       }
     )
